@@ -84,12 +84,16 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script> -->
     <script>
         $(function(){
+
+            $(".msg_history").animate({ scrollTop: $('.msg_history').prop("scrollHeight")}, 1000);
+
+
             // socket initialize and connect to port
             var socket = io.connect('http://localhost:8080');
             //ajax for get message from user and store to data base
-             $('form').submit(function(e){
+             $('.msg_send_btn').click(function(e){
                 e.preventDefault();
-                alert('a');
+                //alert('a');
                 e.preventDefault();
                 var token = $("input[name='_token']").val();
                 var user = $("input[name='user']").val();
@@ -100,29 +104,42 @@
                         url: '{!! URL::to("sendmessage") !!}',
                         dataType: "json",
                         data: {'_token':token,'message':msg,'user':user},
-                        success:function(data){
-                            alert('b');
-                        //    console.log(data);
-                        //pass data to socket and it will push to end user
-                        socket.on('follownotice',function(data){
-        					data = jQuery.parseJSON(data);
-                            console.log(data);
-                            //$('.msg_history').html(data.message);
-                            //condition for receiver and sender virew (DESIGN PURPUSE)
-                            if(data.sender_id == {{Auth::id()}}){
-                                $('.msg_history').append('<div class="outgoing_msg"><div class="sent_msg"><p>'+data.message+'</p><span class="time_date"> '+data.time+'    |    '+data.date+'</span></div></div>');
+                        success:function(data) {
+                            //    alert('b');
+                            //    console.log(data);
+                            //pass data to socket and it will push to end user
+                            socket.on('follownotice',function(data) {
 
-                            }else{
-                                $('.msg_history').append('<div class="incoming_msg"><div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div><div class="received_msg"><div class="received_withd_msg"><p><strong>'+data.sender_name+'</strong></p><p>'+data.message+'</p><span class="time_date"> '+data.time+'    |    '+data.date+'</span></div></div></div>');
-                            }
+            					data = jQuery.parseJSON(data);
+                                //console.log(data);
+                                //$('.msg_history').html(data.message);
+                                //condition for receiver and sender virew (DESIGN PURPUSE)
+                                var uppend = 0;
 
-        				});
+                                if(uppend == 0) {
+
+                                    if( data.sender_id == {{Auth::id()}} ) {
+                                        $('.msg_history').append('<div class="outgoing_msg"><div class="sent_msg"><p>'+data.message+'</p><span class="time_date"> '+data.time+'    |    '+data.date+'</span></div></div>');
+
+                                    } else {
+                                        $('.msg_history').append('<div class="incoming_msg"><div class="incoming_msg_img"> <img src="https://ptetutorials.com/images/user-profile.png" alt="sunil"> </div><div class="received_msg"><div class="received_withd_msg"><p><strong>'+data.sender_name+'</strong><br/>'+data.message+'</p><span class="time_date"> '+data.time+'    |    '+data.date+'</span></div></div></div>');
+                                    }
+
+                                    uppend++;
+                                }
+                                // $(".msg_history").animate({ scrollTop: $('.msg_history').offset().top }, 1000);
+                                $(".msg_history").animate({ scrollTop: $('.msg_history').prop("scrollHeight")}, 1000);
+
+
+        				    });
+
                             $(".write_msg").val('');
                         }
                     });
-                }else{
+                } else {
                     alert("Please Add Message.");
                 }
+
             });
 
             function chatWithUser(user){

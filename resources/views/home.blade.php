@@ -61,7 +61,7 @@
                 @endif
 
             </div>
-            <form>
+            <!-- <form> -->
                 <div class="type_msg">
                     <div class="input_msg_write">
                         <input type="text" class="write_msg" placeholder="Type a message" />
@@ -69,7 +69,7 @@
                         <button class="msg_send_btn" type="button">Send</button>
                     </div>
                 </div>
-            </form>
+            <!-- </form> -->
         </div>
       </div>
 
